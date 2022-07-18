@@ -106,47 +106,6 @@ const getChannels = async () => node_fetch_1.default(`https://discord.com/api/v8
 }).then((res) => res.json())
     .then((json) => json);
 exports.getChannels = getChannels;
-const createServer = async (channels) => {
-    console.log('Creating mirror server...');
-    const cleanedChannels = channels.map(({ id, parent_id, guild_id, last_message_id, ...rest }) => rest);
-    const categories = cleanedChannels.filter((channel) => channel.type === 4);
-    const body = {
-        name: 'mirror',
-        channels: categories,
-    };
-    const serverMap = new Map();
-    const serverResp = await node_fetch_1.default('https://discord.com/api/v8/guilds', {
-        method: 'POST',
-        headers: env_1.headers,
-        body: JSON.stringify(body),
-    });
-    const server = await serverResp.json();
-    const newId = server.id;
-    serverMap.set('serverId', newId);
-    const channelResp = await node_fetch_1.default(`https://discord.com/api/v8/guilds/${newId}/channels`, {
-        headers: {
-            'Content-Type': 'application/json',
-            Authorization: env_1.discordToken,
-        },
-    });
-    const serverChannels = await channelResp.json();
-    return new Promise(async (resolve) => {
-        for (const channel of channels) {
-            if (channel.parent_id && channel.type !== 2) {
-                const parentChannel = channels.find((chan) => chan.id === channel.parent_id);
-                if (parentChannel) {
-                    const newParentChannel = serverChannels.find((chan) => chan.name === parentChannel.name);
-                    if (newParentChannel) {
-                        const newChannel = await exports.createChannel(channel.name, channel.position, newId, newParentChannel.id);
-                        const newWebhook = await exports.createWebhook(newChannel.id);
-                        serverMap.set(channel.id, newWebhook);
-                    }
-                }
-            }
-        }
-        jsonfile_1.default.writeFileSync('./map.json', Object.fromEntries(serverMap));
-        resolve();
-    });
-};
+
 exports.createServer = createServer;
 //# sourceMappingURL=discord.js.map
