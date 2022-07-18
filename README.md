@@ -14,3 +14,4 @@ For developers, do this
 - For npm users, run `npm build` and `npm start` or `yarn build` and `yarn start` if using yarn.
 # solhub-mirror
 # discordmirrorsolhub
+# solhubmirr
