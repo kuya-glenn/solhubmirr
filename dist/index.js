@@ -6,4 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const fs_1 = __importDefault(require("fs"));
 const discord_1 = require("./modules/discord");
 
+discord_1.listen();
+
+
 //# sourceMappingURL=index.js.map
